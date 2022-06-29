@@ -22,7 +22,7 @@ from test_model import TestModel
 class TestDQNModel(TestModel):
     def _model_init(self, args):
         # initialize model
-        model_path = os.path.join(args.checkpointDir, args.algo)
+        model_path = os.path.join(args.checkpointDir, args.algo, args.timestamp)
         model = DQNModel(args, model_path, args.algo)
         with model.model_graph.as_default() as g:
             sess = tf.Session(graph=g)

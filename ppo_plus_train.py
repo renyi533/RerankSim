@@ -24,6 +24,7 @@ def parse_args():
     parser.add_argument('--epochs', default=3, type=int, help='epochs of each iteration.')
     parser.add_argument('--batch_size', default=16, type=int, help='batch size')
     parser.add_argument('--rep_num', default=32, type=int, help='samples repeat number')
+    parser.add_argument('--gamma', default=1.0, type=float, help='discount rate')
     parser.add_argument('--learning_rate', default=1e-5, type=float, help='learning rate')
     parser.add_argument('--c_entropy', default=0.001, type=float, help='entropy coefficient in loss')
     parser.add_argument('--update_steps', default=10, type=int, help='train times every batch')

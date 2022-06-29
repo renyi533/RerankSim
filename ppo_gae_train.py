@@ -33,7 +33,7 @@ def parse_args():
     parser.add_argument('--c_vf', default=0.1, type=float)
     parser.add_argument('--gamma', default=0.99, type=float, help='discount rate')
     parser.add_argument('--lam', default=0.98, type=float)
-    parser.add_argument('--vf_share', type=bool, default=True, action='store_false', help='share network')
+    parser.add_argument('--vf_share', default=True, type=bool ,help='share network')
     
     parser.add_argument('--timestamp', type=str, default=datetime.datetime.now().strftime("%Y%m%d%H%M"))
     parser.add_argument('--evaluator_path', type=str, default='model_eval', help='evaluator ckpt dir')
