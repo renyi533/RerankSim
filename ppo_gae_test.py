@@ -22,7 +22,8 @@ from test_model import TestModel
 class TestPPOGAEModel(TestModel):
     def _model_init(self, args):
         # initialize model
-        model = PPOGAEModel(args, os.path.join(args.checkpointDir, 'ppo_gae_rerank', args.timestamp), 'ppo')
+        algo_name = args.algo.split('-')[0]
+        model = PPOGAEModel(args, os.path.join(args.checkpointDir, args.algo, args.timestamp), algo_name)
 
         with model.model_graph.as_default() as g: 
             sess = tf.Session(graph=g)

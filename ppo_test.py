@@ -22,7 +22,7 @@ from test_model import TestModel
 class TestPPOModel(TestModel):
     def _model_init(self, args):
         # initialize model
-        model = PPOModel(args, os.path.join(args.checkpointDir, 'rl_rerank', args.timestamp), 'ppo')
+        model = PPOModel(args, os.path.join(args.checkpointDir, args.algo, args.timestamp), 'ppo')
         with model.model_graph.as_default() as g: 
             sess = tf.Session(graph=g)
             model.set_sess(sess)

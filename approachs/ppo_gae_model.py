@@ -191,9 +191,11 @@ class PPOGAEModel(RLModel):
             self.c_entropy = tf.placeholder(dtype=tf.float32, name='c_entropy')
             self.returns = tf.placeholder(dtype=tf.float32, shape=[None, self.params.slate_size], name='returns')
             self.vf_old = tf.placeholder(dtype=tf.float32, shape=[None, self.params.slate_size], name='vf_old')
+            self.rewards = tf.placeholder(dtype=tf.float32, shape=[None, self.params.slate_size], name='rewards')
 
         act_idx_one_hot = tf.one_hot(indices=self.actions, depth=self.item_size),
         cur_act_prob = tf.reduce_sum(self.act_probs_train_mask * act_idx_one_hot, axis=-1)
+        
         ratios = tf.exp(tf.log(tf.clip_by_value(cur_act_prob, 1e-10, 1.0))
                         - tf.log(tf.clip_by_value(self.old_act_prob, 1e-10, 1.0)))
         self.ratio = ratios
@@ -218,7 +220,19 @@ class PPOGAEModel(RLModel):
         self.loss_vf = 0.5 * tf.reduce_mean(tf.maximum(vf_losses1, vf_losses2))
 
         # construct computation graph for loss
-        self.total_loss = self.loss_clip - self.c_entropy * self.entropy + self.params.c_vf * self.loss_vf
+        if self.model_name == 'pcl':
+            act_prob = tf.clip_by_value(cur_act_prob, 1e-10, 1.0)
+            act_prob = tf.reshape(act_prob, [-1, self.params.slate_size, 1])
+            vpred = tf.reshape(self.vf, [-1, self.params.slate_size, 1])
+            vpred_pre = vpred[:, :-1, :]
+            vpred_nxt = vpred[:, 1:, :]
+            act_prob = act_prob[:, :-1, :]
+            rewards = self.rewards[:, :-1]
+            rewards = tf.expand_dims(rewards, -1)
+            pcl_loss = tf.square(vpred_pre - self.params.gamma * vpred_nxt -  rewards + self.c_entropy * tf.log(act_prob))
+            self.total_loss = tf.reduce_mean(pcl_loss)
+        else:
+            self.total_loss = self.loss_clip - self.c_entropy * self.entropy + self.params.c_vf * self.loss_vf
 
         self.g = tf.reduce_mean(self.returns[:, 0])
 
@@ -270,7 +284,8 @@ class PPOGAEModel(RLModel):
                             self.returns: returns,
                             self.c_entropy: c_entropy, 
                             self.train_phase: True, 
-                            self.vf_old: values
+                            self.vf_old: values,
+                            self.rewards: rewards
                             })
             return total_loss, mean_return, summary, step
 
@@ -292,7 +307,8 @@ class PPOGAEModel(RLModel):
                             self.returns: returns,
                             self.c_entropy: c_entropy, 
                             self.train_phase: True, 
-                            self.vf_old: values
+                            self.vf_old: values,
+                            self.rewards: rewards
                             })
             return total_loss, mean_return, summary, step
 

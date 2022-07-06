@@ -47,14 +47,14 @@ if __name__ == "__main__":
                     seed=100)
     train_set = Dataset(doc, 'train')
     val_set = Dataset(doc, 'validation')
-    model = PPOModel(args, os.path.join(args.checkpointDir, 'rl_rerank', args.timestamp), 'ppo')
+    model = PPOModel(args, os.path.join(args.checkpointDir, args.algo, args.timestamp), 'ppo')
     evaluator = Evaluator(model_path=os.path.join(os.path.dirname(os.path.realpath(__file__)), args.evaluator_path))
     with model.model_graph.as_default() as g: 
         sess = tf.Session(graph=g)
         model.set_sess(sess)
 
-        path1, path2 = os.path.join(args.checkpointDir, 'rl_rerank', args.timestamp, 'train'), \
-                        os.path.join(args.checkpointDir, 'rl_rerank', args.timestamp, 'test')
+        path1, path2 = os.path.join(args.checkpointDir, args.algo, args.timestamp, 'train'), \
+                        os.path.join(args.checkpointDir, args.algo, args.timestamp, 'test')
         if not os.path.isdir(path1):
             os.makedirs(path1)
         if not os.path.isdir(path2):

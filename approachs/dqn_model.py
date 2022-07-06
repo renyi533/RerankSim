@@ -61,8 +61,11 @@ class DQNModel(RLModel):
 
             x = tf.concat([self.enc_outputs, dec_outputs_train_tile], axis=-1)                              # (B*15, 15, n)
             # (B*15, 15)
-            self.q_pred_train = tf.reshape(self.get_dnn(x, [32, 16, 1], [tf.nn.relu, tf.nn.relu, None], "dec_dnn"), [-1, self.item_size])
-
+            adv_pred_train = tf.reshape(self.get_dnn(x, [32, 16, 1], [tf.nn.relu, tf.nn.relu, None], "adv_dnn"), [-1, self.item_size])
+            val_pred_train = self.get_dnn(dec_outputs_train, [32, 16, 1], [tf.nn.relu, tf.nn.relu, None], "val_dnn")
+            val_pred_train = tf.reshape(tf.tile(val_pred_train, [1, self.item_size, 1]), [-1, self.item_size])
+            
+            self.q_pred_train = val_pred_train + (adv_pred_train - tf.reduce_mean(adv_pred_train, axis=-1, keepdims=True))
             self.q_pred_train_mask = tf.add(tf.multiply(1. - self.mask_in, -1.0e9), self.q_pred_train)
 
             # for predicting
@@ -88,8 +91,11 @@ class DQNModel(RLModel):
                 dec_outputs_tile = tf.tile(tf.reshape(dec_outputs, [-1, 1, dec_outputs.shape[-1]]), [1, self.item_size, 1])
 
                 x = tf.concat([self.enc_outputs, dec_outputs_tile], axis=-1)
-                q_pred = tf.reshape(self.get_dnn(x, [32, 16, 1], [tf.nn.relu, tf.nn.relu, None], "dec_dnn"), [-1, self.item_size])  # （B,15）
+                adv_pred = tf.reshape(self.get_dnn(x, [32, 16, 1], [tf.nn.relu, tf.nn.relu, None], "adv_dnn"), [-1, self.item_size])  # （B,15）
+                val_pred = self.get_dnn(tf.reshape(dec_outputs, [-1, 1, dec_outputs.shape[-1]]), [32, 16, 1], [tf.nn.relu, tf.nn.relu, None], "val_dnn")
+                val_pred = tf.reshape(tf.tile(val_pred, [1, self.item_size, 1]), [-1, self.item_size])
 
+                q_pred = val_pred + (adv_pred - tf.reduce_mean(adv_pred, axis=-1, keepdims=True))
                 q_pred_mask = tf.add(tf.multiply(1. - mask_tmp, -1.0e9), q_pred)  # (B, 15)
                 act_argmax = tf.reshape(tf.argmax(q_pred_mask, axis=-1), [-1])
 
