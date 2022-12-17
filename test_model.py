@@ -60,5 +60,4 @@ class TestModel(object):
                     break
             user_res_all = np.concatenate(user_res_all, axis=0)
             eval_pred_all = np.concatenate(eval_pred_all, axis=0)
-            print('True score:', np.mean(np.sum(user_res_all, axis=1)))
-            print('Eval score:', np.mean(np.sum(eval_pred_all, axis=1)))
+            print('True score: %.4f, Eval score:%.4f' % (np.mean(np.sum(user_res_all, axis=1)), np.mean(np.sum(eval_pred_all, axis=1))))
