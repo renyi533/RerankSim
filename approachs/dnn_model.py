@@ -27,7 +27,7 @@ class DNNModel(Model):
 
         self.score, self.loss = self._build_net()
         
-        self.set_global_step(tf.train.create_global_step())
+        self.set_global_step(None)#tf.train.create_global_step())
         # learning rate decay
         self.learning_rate = tf.train.exponential_decay(
                         learning_rate=self.params.learning_rate,

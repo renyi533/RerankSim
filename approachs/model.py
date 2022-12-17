@@ -51,6 +51,9 @@ class Model(object):
         self.saver = saver
     
     def set_global_step(self, global_step):
+        if global_step is None:
+            print('create and initialize global step to 0')
+            global_step = tf.Variable(0, dtype=tf.int32, name='global_step')
         self.global_step = global_step
     
     @property

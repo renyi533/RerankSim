@@ -130,7 +130,7 @@ class RLModel(Model):
 
             self.rerank_predict = tf.identity(tf.reshape(scores_pred, [-1, 1]), 'rerank_predict')
 
-        self.set_global_step(tf.train.create_global_step())
+        self.set_global_step(None)#tf.train.create_global_step())
         self.set_saver(tf.train.Saver())
         with tf.variable_scope("loss"):
             self._build_loss()

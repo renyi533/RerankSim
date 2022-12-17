@@ -253,7 +253,7 @@ class PRM(Model):
         self.loss += self.l2_loss
 
         # opt
-        self.set_global_step(tf.train.create_global_step())
+        self.set_global_step(None)#tf.train.create_global_step())
         self.opt = tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(self.loss, global_step=self.global_step)
         # saver
         self.set_saver(tf.train.Saver())

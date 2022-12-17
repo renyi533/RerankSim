@@ -89,7 +89,7 @@ class Discriminator(Model):
             self.entropy_loss = tf.reduce_mean(self.logit_bernoulli_entropy(self.d_logits))
             self.total_loss = self.d_loss - self.params.c_entropy_d * self.entropy_loss
 
-        self.set_global_step(tf.train.create_global_step())
+        self.set_global_step(None)#tf.train.create_global_step())
         self.set_saver(tf.train.Saver())
 
         # learning rate decay

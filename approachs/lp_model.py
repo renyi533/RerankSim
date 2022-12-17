@@ -101,7 +101,7 @@ class LPModel(Model):
                 y_ * tf.log(tf.clip_by_value(y, 1e-5, 1.0)) + (1 - y_) * tf.log(tf.clip_by_value(1 - y, 1e-5, 1.0)))
             self.loss = self.ctr_loss
             
-            self.set_global_step(tf.train.create_global_step())
+            self.set_global_step(None)#tf.train.create_global_step())
             
             # learning rate decay
             learning_rate = tf.train.exponential_decay(
