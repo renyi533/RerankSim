@@ -8,7 +8,7 @@ import os
 import time
 import datetime
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 from approachs.pointwise_model import PointWise
 from approachs.pairwise_model import PairWise
 from approachs.listwise_model import ListWise
@@ -18,7 +18,8 @@ from utils.io_utils import base_args
 from dataset import Dataset
 from Env import Documents
 from utils.io_utils import write_args
-
+from utils.misc import create_session
+tf.disable_v2_behavior()
 def parse_args():
     parser = base_args()
     parser.add_argument('--algo', default='PointWise', type=str, help='PointWise, PairWise, ListWise, GroupWise, SoftRank')
@@ -59,7 +60,7 @@ if __name__ == "__main__":
         raise NotImplementedError('')
 
     with model.model_graph.as_default() as g:                                           # rarank model graph
-        sess = tf.Session(graph=g)
+        sess = create_session(graph=g)
         model.set_sess(sess)
         
         if args.algo == 'GroupWise':

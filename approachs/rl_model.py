@@ -6,7 +6,7 @@ from __future__ import print_function
 
 import os
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 from approachs.model import Model
 from utils.measure import gauc, pv_auc, ndcg
 
@@ -166,11 +166,11 @@ class RLModel(Model):
         assert len(layer_nums) == len(layer_acts)
         with tf.variable_scope(name):
             for i, layer_num in enumerate(layer_nums):
-                input_ft = tf.contrib.layers.fully_connected(
+                input_ft = tf.layers.dense(
                     inputs=input_ft,
-                    num_outputs=layer_num,
-                    scope='layer_%d' % i,
-                    activation_fn=layer_acts[i],
+                    units=layer_num,
+                    name='layer_%d' % i,
+                    activation=layer_acts[i],
                     reuse=tf.AUTO_REUSE)
         return input_ft
     

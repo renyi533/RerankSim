@@ -8,15 +8,15 @@ import os
 import copy
 import datetime
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 
 from Env import UserResponse, Documents
 from dataset import Dataset
 from utils.io_utils import base_args
 from approachs.lp_model import LPModel
 from utils.io_utils import write_args 
-
-
+from utils.misc import create_session
+tf.disable_v2_behavior()
 def parse_args():
     parser = base_args()
     parser.add_argument('--algo', default='ctr_model', type=str, help='algorithm name')
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     model = LPModel(args, os.path.join(args.checkpointDir, 'Evaluator', args.timestamp), 'ctr_model')
 
     with model.model_graph.as_default() as g: 
-        sess = tf.Session(graph=g)
+        sess = create_session(graph=g)
         model.set_sess(sess)
 
         path1, path2 = os.path.join(args.checkpointDir, 'Evaluator', args.timestamp, 'train'), \

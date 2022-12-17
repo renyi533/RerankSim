@@ -7,7 +7,7 @@ from __future__ import print_function
 import numpy as np
 import copy
 import os
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 
 
 class Documents(object):

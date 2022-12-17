@@ -8,7 +8,7 @@ import os
 import time
 import datetime
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 from approachs.pointwise_model import PointWise
 from approachs.pairwise_model import PairWise
 from approachs.listwise_model import ListWise
@@ -21,8 +21,8 @@ from dnn_train import parse_args
 from approachs.lp_model import Evaluator
 from utils.io_utils import write_args 
 from test_model import TestModel
-
-
+from utils.misc import create_session
+tf.disable_v2_behavior()
 class TestDnnModel(TestModel):
     def _model_init(self, args):
         # initialize model
@@ -37,7 +37,7 @@ class TestDnnModel(TestModel):
             raise NotImplementedError('')
 
         with model.model_graph.as_default() as g:  
-            sess = tf.Session(graph=g)
+            sess = create_session(graph=g)
             model.set_sess(sess)
             
             sess.run(tf.global_variables_initializer())

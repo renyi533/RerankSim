@@ -8,15 +8,15 @@ import os
 import time
 import datetime
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 
 from approachs.PRMModel import PRM
 
 from utils.io_utils import base_args
 from dataset import Dataset
 from Env import Documents
-
-
+from utils.misc import create_session
+tf.disable_v2_behavior()
 def parse_args():
     parser = base_args()
     parser.add_argument('--algo', default='PRM', type=str, help='PointWise, PairWise, ListWise, GroupWise, SoftRank, SVMRank')
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     model = PRM(params=args, model_path=dir, model_name=args.algo)
 
     with model.model_graph.as_default() as g:  # rarank model graph
-        sess = tf.Session(graph=g)
+        sess = create_session(graph=g)
         model.set_sess(sess)
         path1, path2 = os.path.join(dir, 'train'), os.path.join(dir, 'test')
         train_writer = tf.summary.FileWriter(path1, g)

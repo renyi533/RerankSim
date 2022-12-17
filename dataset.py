@@ -8,10 +8,10 @@ import numpy as np
 import pickle
 import copy
 import os
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 from Env import UserResponse, Documents
 from utils.io_utils import base_args
-
+tf.disable_v2_behavior()
 DATASET_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'dataset')
 
 

@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 import numpy as np
 
 from approachs.model import Model
@@ -35,7 +35,7 @@ class GroupWise(DNNModel):
                     inputs = tf.layers.dense(inputs=inputs,
                                               units=dim,
                                               activation=act, 
-                                              kernel_regularizer=tf.contrib.layers.l2_regularizer(self.params.l2_regu), 
+                                              kernel_regularizer=tf.keras.regularizers.l2(self.params.l2_regu), 
                                               name='layer_'+str(j),
                                               reuse=tf.AUTO_REUSE)
                 logits_inc = tf.reshape(inputs, (-1, group_size, 1))

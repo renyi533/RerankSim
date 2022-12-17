@@ -8,7 +8,7 @@ import os
 import copy
 import numpy as np
 import datetime
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 from Env import UserResponse, Documents
 from dataset import Dataset
 from utils.io_utils import base_args
@@ -17,15 +17,15 @@ from utils.io_utils import write_args
 from ppo_train import parse_args
 from approachs.lp_model import Evaluator
 from test_model import TestModel
-
-
+from utils.misc import create_session
+tf.disable_v2_behavior()
 class TestPPOPlusModel(TestModel):
     def _model_init(self, args):
         # initialize model
         model = PPOModel(args, os.path.join(args.checkpointDir, 'rl_rerank_gd', args.timestamp), 'ppo')
 
         with model.model_graph.as_default() as g: 
-            sess = tf.Session(graph=g)
+            sess = create_session(graph=g)
             model.set_sess(sess)
             sess.run(tf.global_variables_initializer())
             model.load_model()

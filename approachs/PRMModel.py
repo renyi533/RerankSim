@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 from .model import Model
 from utils.measure import pv_auc, gauc, ndcg, mean_average_precision
 

@@ -8,7 +8,7 @@ import os
 import time
 import datetime
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 
 from dataset import Dataset
 from Env import UserResponse, Documents

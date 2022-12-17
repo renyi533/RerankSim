@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 from approachs.model import Model
 from utils.measure import gauc, pv_auc, ndcg
 
@@ -52,11 +52,11 @@ class Discriminator(Model):
 
             dense_feature_normed = new_shop_feature
             fn = tf.nn.relu
-            layer1 = tf.contrib.layers.fully_connected(
+            layer1 = tf.layers.dense(
                 inputs=dense_feature_normed,
-                num_outputs=64,
-                scope='layer1',
-                activation_fn=fn)
+                units=64,
+                name='layer1',
+                activation=fn)
             layer2 = layer1
             new_dense_feature = self.get_rnn_feature(layer2, self.phase, self.keep_prob)
 
@@ -64,17 +64,17 @@ class Discriminator(Model):
             new_feature = new_dense_feature
 
             with tf.variable_scope('d_predict'):
-                layer3 = tf.contrib.layers.fully_connected(
+                layer3 = tf.layers.dense(
                     inputs=new_feature,
-                    num_outputs=32,
-                    scope='layer3',
-                    activation_fn=fn)
+                    units=32,
+                    name='layer3',
+                    activation=fn)
                 layer4 = layer3
-                output_layer = tf.contrib.layers.fully_connected(
+                output_layer = tf.layers.dense(
                     inputs=layer4,
-                    num_outputs=1,
-                    scope='output',
-                    activation_fn=None)
+                    units=1,
+                    name='output',
+                    activation=None)
 
                 self.d_logits = output_layer
                 self.d_pred = tf.nn.sigmoid(output_layer)

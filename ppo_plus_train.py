@@ -8,7 +8,7 @@ import os
 import copy
 import numpy as np
 import datetime
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 from Env import Documents
 from dataset import Dataset
 from utils.io_utils import base_args
@@ -16,8 +16,8 @@ from approachs.ppo_model import PPOModel
 from approachs.lp_model import Evaluator
 from approachs.discriminator import Discriminator
 from utils.io_utils import write_args 
-
-
+from utils.misc import create_session
+tf.disable_v2_behavior()
 def parse_args():
     parser = base_args()
     parser.add_argument('--algo', default='rl-rerank-gd', type=str, help='algorithm name')
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     discriminator = Discriminator(args, os.path.join(args.checkpointDir, 'discriminator', args.timestamp_d), 'discriminator')
     
     with model.model_graph.as_default() as g: 
-        sess = tf.Session(graph=g)
+        sess = create_session(graph=g)
         model.set_sess(sess)
 
         path1, path2 = os.path.join(args.checkpointDir, 'rl_rerank_gd', args.timestamp, 'train'), \

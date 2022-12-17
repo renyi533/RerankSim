@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 from approachs.model import Model
 from utils.measure import gauc, pv_auc, ndcg
 
@@ -57,11 +57,11 @@ class LPModel(Model):
             fn = tf.nn.relu
             # fn = tf.nn.leaky_relu
             # fn = tf.nn.tanh
-            layer1 = tf.contrib.layers.fully_connected(
+            layer1 = tf.layers.dense(
                 inputs=dense_feature_normed,
-                num_outputs=64,
-                scope='layer1',
-                activation_fn=fn)
+                units=64,
+                name='layer1',
+                activation=fn)
             # layer1 = tf.nn.dropout(layer1, self.keep_prob)
             # layer2 = tf.contrib.layers.fully_connected(
             #     inputs=layer1,
@@ -74,11 +74,11 @@ class LPModel(Model):
 
             new_feature = tf.concat([layer2, new_dense_feature], axis=-1) 
 
-            layer3 = tf.contrib.layers.fully_connected(
+            layer3 = tf.layers.dense(
                 inputs=new_feature,
-                num_outputs=32,
-                scope='layer3',
-                activation_fn=fn)
+                units=32,
+                name='layer3',
+                activation=fn)
             # layer3 = tf.nn.dropout(layer3, self.keep_prob)
             # layer4 = tf.contrib.layers.fully_connected(
             #     inputs=layer3,
@@ -87,11 +87,11 @@ class LPModel(Model):
             #     activation_fn=fn)
             # layer4 = tf.nn.dropout(layer4, self.keep_prob)
             layer4 = layer3
-            output_layer = tf.contrib.layers.fully_connected(
+            output_layer = tf.layers.dense(
                 inputs=layer4,
-                num_outputs=1,
-                scope='output',
-                activation_fn=tf.nn.sigmoid)
+                units=1,
+                name='output',
+                activation=tf.nn.sigmoid)
             self.ctr_pred = tf.identity(output_layer, 'ctr_pred')
 
         with tf.variable_scope("loss"):

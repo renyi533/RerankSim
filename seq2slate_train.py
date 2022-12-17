@@ -8,14 +8,14 @@ import os
 import copy
 import numpy as np
 import datetime
-import tensorflow as tf
+import tensorflow.compat.v1  as tf
 from Env import Documents
 from dataset import Dataset
 from utils.io_utils import base_args
 from approachs.rl_sl_model import SLModel
 from utils.io_utils import write_args 
-
-
+from utils.misc import create_session
+tf.disable_v2_behavior()
 def parse_args():
     parser = base_args()
     parser.add_argument('--algo', default='seq2slate', type=str, help='algorithm name')
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     model = SLModel(args, os.path.join(args.checkpointDir, 'seq2seq', args.loss, args.timestamp), 'seq2slate')
 
     with model.model_graph.as_default() as g: 
-        sess = tf.Session(graph=g)
+        sess = create_session(graph=g)
         model.set_sess(sess)
 
         path1, path2 = os.path.join(args.checkpointDir, 'seq2seq', args.loss, args.timestamp, 'train'), \
